@@ -1,0 +1,91 @@
+{
+  "aggregate": {
+    "faithfulness": 1.0,
+    "answer_relevancy": 0.714,
+    "context_precision": 0.8917,
+    "context_recall": 0.7666
+  },
+  "num_questions": 20,
+  "failures": [
+    {
+      "question": "Muốn mua thiết bị trị giá 55 triệu cần ai phê duyệt?",
+      "worst_metric": "context_precision",
+      "score": 0.5,
+      "avg_score": 0.64295,
+      "diagnosis": "Đoạn văn không liên quan bị xếp lên đầu",
+      "suggested_fix": "Bổ sung tầng Cross-Encoder reranking hoặc lọc theo metadata"
+    },
+    {
+      "question": "Bao lâu phải đổi mật khẩu một lần?",
+      "worst_metric": "context_precision",
+      "score": 0.3333,
+      "avg_score": 0.670825,
+      "diagnosis": "Đoạn văn không liên quan bị xếp lên đầu",
+      "suggested_fix": "Bổ sung tầng Cross-Encoder reranking hoặc lọc theo metadata"
+    },
+    {
+      "question": "Thâm niên bao nhiêu năm thì được cộng thêm ngày phép?",
+      "worst_metric": "context_precision",
+      "score": 0.5,
+      "avg_score": 0.7601,
+      "diagnosis": "Đoạn văn không liên quan bị xếp lên đầu",
+      "suggested_fix": "Bổ sung tầng Cross-Encoder reranking hoặc lọc theo metadata"
+    },
+    {
+      "question": "Nếu cần mua một chiếc laptop 30 triệu cho nhân viên mới, ai phê duyệt và cần gì từ phòng CNTT?",
+      "worst_metric": "answer_relevancy",
+      "score": 0.44,
+      "avg_score": 0.778475,
+      "diagnosis": "Câu trả lời bị lệch trọng tâm câu hỏi",
+      "suggested_fix": "Viết lại prompt hướng dẫn mô hình trả lời trực tiếp hơn"
+    },
+    {
+      "question": "Một nhân viên Senior có 9 năm thâm niên được nghỉ bao nhiêu ngày phép năm và lương trong khoảng nào?",
+      "worst_metric": "context_recall",
+      "score": 0.5217,
+      "avg_score": 0.780425,
+      "diagnosis": "Hệ thống tìm kiếm bỏ sót đoạn văn đúng",
+      "suggested_fix": "Cải thiện lại bước cắt đoạn hoặc bổ sung từ khóa BM25"
+    },
+    {
+      "question": "Thông tin lương thuộc cấp độ phân loại dữ liệu nào?",
+      "worst_metric": "answer_relevancy",
+      "score": 0.5636,
+      "avg_score": 0.785625,
+      "diagnosis": "Câu trả lời bị lệch trọng tâm câu hỏi",
+      "suggested_fix": "Viết lại prompt hướng dẫn mô hình trả lời trực tiếp hơn"
+    },
+    {
+      "question": "Nghỉ phép không lương 20 ngày cần ai phê duyệt?",
+      "worst_metric": "answer_relevancy",
+      "score": 0.6,
+      "avg_score": 0.801775,
+      "diagnosis": "Câu trả lời bị lệch trọng tâm câu hỏi",
+      "suggested_fix": "Viết lại prompt hướng dẫn mô hình trả lời trực tiếp hơn"
+    },
+    {
+      "question": "Mật khẩu phải có tối thiểu bao nhiêu ký tự?",
+      "worst_metric": "context_precision",
+      "score": 0.5,
+      "avg_score": 0.81655,
+      "diagnosis": "Đoạn văn không liên quan bị xếp lên đầu",
+      "suggested_fix": "Bổ sung tầng Cross-Encoder reranking hoặc lọc theo metadata"
+    },
+    {
+      "question": "Lương thử việc của nhân viên Junior mức cao nhất là bao nhiêu?",
+      "worst_metric": "answer_relevancy",
+      "score": 0.5692,
+      "avg_score": 0.820875,
+      "diagnosis": "Câu trả lời bị lệch trọng tâm câu hỏi",
+      "suggested_fix": "Viết lại prompt hướng dẫn mô hình trả lời trực tiếp hơn"
+    },
+    {
+      "question": "Nhân viên được nghỉ bao nhiêu ngày phép năm?",
+      "worst_metric": "context_recall",
+      "score": 0.52,
+      "avg_score": 0.83555,
+      "diagnosis": "Hệ thống tìm kiếm bỏ sót đoạn văn đúng",
+      "suggested_fix": "Cải thiện lại bước cắt đoạn hoặc bổ sung từ khóa BM25"
+    }
+  ]
+}

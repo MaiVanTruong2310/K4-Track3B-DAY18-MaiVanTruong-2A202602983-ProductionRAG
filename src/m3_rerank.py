@@ -29,28 +29,41 @@ class CrossEncoderReranker:
 
     def _load_model(self):
         if self._model is None:
-            # TODO: Load cross-encoder model
-            # from sentence_transformers import CrossEncoder
-            # self._model = CrossEncoder(self.model_name)
-            #
-            # ⚠️ LƯU Ý: Dùng sentence_transformers.CrossEncoder, KHÔNG dùng FlagEmbedding.
-            # FlagReranker crash với transformers>=5.0 (XLMRobertaTokenizer lỗi).
-            pass
+            from sentence_transformers import CrossEncoder
+            self._model = CrossEncoder(self.model_name)
         return self._model
 
     def rerank(self, query: str, documents: list[dict], top_k: int = RERANK_TOP_K) -> list[RerankResult]:
         """Rerank documents: top-20 → top-k."""
-        # TODO: Implement reranking
-        # 1. if not documents: return []
-        # 2. model = self._load_model()
-        # 3. pairs = [(query, doc["text"]) for doc in documents]
-        # 4. scores = model.predict(pairs)
-        # 5. if isinstance(scores, (int, float)): scores = [scores]
-        # 6. scored = sorted(zip(scores, documents), key=lambda x: x[0], reverse=True)
-        # 7. Return [RerankResult(text=..., original_score=doc.get("score", 0.0),
-        #            rerank_score=float(score), metadata=..., rank=i)
-        #            for i, (score, doc) in enumerate(scored[:top_k])]
-        return []
+        if not documents:
+            return []
+        model = self._load_model()
+        pairs = [
+            (query, doc["text"] if isinstance(doc, dict) else getattr(doc, "text", ""))
+            for doc in documents
+        ]
+        scores = model.predict(pairs)
+        if hasattr(scores, "tolist"):
+            scores = scores.tolist()
+        elif isinstance(scores, (int, float)):
+            scores = [float(scores)]
+        else:
+            scores = [float(s) for s in scores]
+
+        scored = sorted(zip(scores, documents), key=lambda x: x[0], reverse=True)
+        results = []
+        for i, (score, doc) in enumerate(scored[:top_k]):
+            text = doc["text"] if isinstance(doc, dict) else getattr(doc, "text", "")
+            orig_score = doc.get("score", 0.0) if isinstance(doc, dict) else getattr(doc, "score", 0.0)
+            meta = doc.get("metadata", {}) if isinstance(doc, dict) else getattr(doc, "metadata", {})
+            results.append(RerankResult(
+                text=text,
+                original_score=float(orig_score),
+                rerank_score=float(score),
+                metadata=meta,
+                rank=i
+            ))
+        return results
 
 
 class FlashrankReranker:
@@ -59,10 +72,29 @@ class FlashrankReranker:
         self._model = None
 
     def rerank(self, query: str, documents: list[dict], top_k: int = RERANK_TOP_K) -> list[RerankResult]:
-        # TODO (optional): from flashrank import Ranker, RerankRequest
-        # model = Ranker(); passages = [{"text": d["text"]} for d in documents]
-        # results = model.rerank(RerankRequest(query=query, passages=passages))
-        return []
+        if not documents:
+            return []
+        try:
+            from flashrank import Ranker, RerankRequest
+            if self._model is None:
+                self._model = Ranker()
+            passages = [
+                {"id": i, "text": doc["text"] if isinstance(doc, dict) else getattr(doc, "text", ""), "meta": doc}
+                for i, doc in enumerate(documents)
+            ]
+            results = self._model.rerank(RerankRequest(query=query, passages=passages))
+            return [
+                RerankResult(
+                    text=r["text"],
+                    original_score=float(r["meta"].get("score", 0.0) if isinstance(r["meta"], dict) else getattr(r["meta"], "score", 0.0)),
+                    rerank_score=float(r["score"]),
+                    metadata=r["meta"].get("metadata", {}) if isinstance(r["meta"], dict) else getattr(r["meta"], "metadata", {}),
+                    rank=i
+                )
+                for i, r in enumerate(results[:top_k])
+            ]
+        except Exception:
+            return []
 
 
 def benchmark_reranker(reranker, query: str, documents: list[dict], n_runs: int = 5) -> dict:
